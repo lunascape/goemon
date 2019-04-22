@@ -15,29 +15,17 @@ interface IState {
 
 export const routes = [
   {
-    path: '/',
+    path: '/test',
     component: GuestTop,
     exact: true
-  },  {
-    path: '/react',
-    component: GuestReact,
-    exact: false
-  },  {
-    path: '/redux',
-    component: GuestRedux,
-    exact: false
   }, {
-    path: '/redux/counter',
-    component: GuestRedux,
-    exact: false
-  }, {
-    path: '*',
+    path: '/test/*',
     component: NotFound,
     exact: false
   }
 ];
 
-export class GuestRouteComponent extends React.Component<IProps, IState> {
+export class TestRouteComponent extends React.Component<IProps, IState> {
   // Remove the server-side injected CSS.
   componentDidMount() {
     const jssStyles = document.getElementById('jss-server-side');

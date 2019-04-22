@@ -27,6 +27,7 @@ class MemberTop extends React.Component<IProps & WithStyles<typeof styles>, {}> 
 
     public render() {
       const { classes, match } = this.props;
+      const logoutUrl = `${match.url}logout`;
 
       return (
         <div className={classes.root}>
@@ -35,7 +36,7 @@ class MemberTop extends React.Component<IProps & WithStyles<typeof styles>, {}> 
           <Typography variant="title" className={classes.title}>
             Administrator
           </Typography>
-          <Button className={classes.logout} href="/member/logout">Logout</Button>
+          <Button className={classes.logout} href={logoutUrl}>Logout</Button>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -51,8 +52,8 @@ class MemberTop extends React.Component<IProps & WithStyles<typeof styles>, {}> 
         <div className={classes.toolbar} />
         <div><p>URL: {match.url}</p></div>
         <Switch>
-          <Route exact path={`/member/profile`} component={Profile} />
-          <Route exact path={`/member/page`} component={PageSample} />
+          <Route exact path={`${match.url}/profile`} component={Profile} />
+          <Route exact path={`${match.url}/page`} component={PageSample} />
           <Route exact path={`${match.url}`} component={FormSample} />
         </Switch>
       </main>

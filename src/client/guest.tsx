@@ -6,7 +6,7 @@ import * as ReactDOM from 'react-dom';
 import * as config from 'react-global-configuration';
 import { configureStore } from './stores/member-store';
 import { createClientApp } from './base/react/app-creator';
-import { RouteComponent } from './routes/guest-route';
+import { GuestRouteComponent } from './routes/guest-route';
 import { defaultConfig } from './config/default';
 import { UserContext, IContextProps } from './context/user-context';
 
@@ -27,7 +27,7 @@ const userContext: IContextProps = {
 };
 export const app = createClientApp(
   <UserContext.Provider value={userContext}>
-    <RouteComponent />
+    <GuestRouteComponent />
   </UserContext.Provider>
   , store, '');
 

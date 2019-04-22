@@ -32,7 +32,7 @@ export const toggleTodoReducer = Actions.toggleTodo.reducer<IState>((state, acti
     };
 });
 
-export const loadTodoReducer = Actions.listTodo.reducer<IState>((state, action) => {
+export const listTodoReducer = Actions.listTodo.reducer<IState>((state, action) => {
   if ( action.error ) {
     return {
       message: action.payload && action.payload.message,
@@ -46,6 +46,6 @@ export const loadTodoReducer = Actions.listTodo.reducer<IState>((state, action) 
 export const reducer = createTypeReducer(
   initialState,
   addTodoReducer,
-  loadTodoReducer,
+  listTodoReducer,
   toggleTodoReducer
 );

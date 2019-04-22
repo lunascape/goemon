@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 import { Express, Router } from 'express';
 import { configureStore } from '../client/stores/guest-store';
-import { RouteComponent, routes } from '../client/routes/guest-route';
+import { GuestRouteComponent, routes } from '../client/routes/guest-route';
 import { theme } from '../client/themes/material-ui-lightblue';
 import { Renderer } from './base/route-base';
 import * as ReactDOMServer from 'react-dom/server';
@@ -10,7 +10,7 @@ import { app }  from '../client/guest';
 const router = Router();
 const store = configureStore();
 
-let renderer =  new Renderer(store, RouteComponent, routes, theme);
+let renderer =  new Renderer(store, GuestRouteComponent, routes, theme);
 
 module.exports = function (app: Express) {
   app.use('/', router);
