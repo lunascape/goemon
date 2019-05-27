@@ -2,18 +2,32 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "lib": ["dom", "es2015.promise", "es5", "esnext"],
+    "lib": [
+      "dom",
+      "es2015.promise",
+      "es2015",
+      "es2016",
+      "es5",
+      "esnext"
+    ],
     "declaration": false,
     "noImplicitAny": false,
     "sourceMap": true,
     "removeComments": true,
     "jsx": "react",
-    "outDir": "built/",
+    "outDir": "build/",
     "rootDir": "./src",
     "baseUrl": "./src",
     "allowJs": true,
-    "allowSyntheticDefaultImports": false,
-    "experimentalDecorators": true
+    // "allowSyntheticDefaultImports": false,
+    "experimentalDecorators": true,
+    "noEmitHelpers": true,
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "noImplicitReturns": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "include": [
     "**/*.ts",
@@ -21,11 +35,13 @@
   ],
   "exclude": [
     "./src/client",
+    "./scripts",
     "./bin",
-    "./built",
+    "./build",
     "./node_modules",
     "gulpfile.js",
     "webpack.config.js",
-    "__test__"
+    "**/__test__",
+    "**/__mocks__"
   ]
 }

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React from 'react';
 import { Route } from 'react-router-dom';
 
 interface IProps extends React.Props<{}> {
@@ -12,7 +12,7 @@ export class NotFound extends React.Component<IProps & IDispProps, any> {
     return (
       <Route render={({ staticContext }) => {
         if (staticContext) {
-          staticContext.status = 404;
+          staticContext.statusCode = 404;
         }
         return (
           <div>

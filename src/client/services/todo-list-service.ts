@@ -1,14 +1,13 @@
-import * as fetch from 'isomorphic-fetch';
+import fetch from 'isomorphic-fetch';
 
 export default class TodoListService {
 
   public static getTodos(url) {
-    return new Promise((resolve, reject) => {
-      console.log(url);
+    return new Promise<string>((resolve, reject) => {
       fetch(url)
-      .then(apiResult => apiResult.json())
-      .then(json => resolve(json))    // Success
-      .catch(error => reject(error)); // Fail
+        .then(apiResult => apiResult.json())
+        .then(json => resolve(json))    // Success
+        .catch(error => reject(error)); // Fail
     });
   }
 }

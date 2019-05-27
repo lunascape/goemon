@@ -1,77 +1,55 @@
-import * as React from 'react';
-import { Express, Router } from 'express';
-import * as fs from 'fs';
+import React from 'react';
+import { Router } from 'express';
+import { configureStore, InitialState } from '../client/stores/member-store';
+import { MaterialUiAppContainer } from '../client/base/react/material-ui-app-container';
+import { RouteComponent, routes } from '../client/routes/member-route';
+import { theme } from '../client/themes/material-ui-lightblue';
+import { ServerSideRenderer } from './utilities/ssr-renderer';
+import { SheetsRegistry } from 'react-jss/lib/jss';
+import passport from 'passport';
 
-import { renderToString } from 'react-dom/server';
-import { matchRoutes, renderRoutes } from 'react-router-config';
-import { matchPath } from 'react-router-dom';
-import PassportUtility from '../middlewares/passport/passport-utility';
-import { configureStore, IStore } from '../client/stores/configure-store';
-import { renderOnServer } from '../client/base/common/route';
-import { MemberApp, routes, theme } from '../client/apps/member-app';
-
-const passport = require('passport');
 const router = Router();
-let jsDate: number = 0;
+
+let renderer = new ServerSideRenderer('member.js');
 
 module.exports = (app) => {
   app.use('/member', router);
 };
 
-router.get('/login',  (req: any, res, next) => {
-  res.render('login', { message: req.flash('error') });
-});
-
 router.post('/login', passport.authenticate('local',
-  { successRedirect: '/member', failureRedirect: '/member/login', failureFlash: true }
+  { successRedirect: '/member/', failureRedirect: '/member/login', failureFlash: true }
 ));
 
 router.get('/logout', (req: any, res) => {
   req.logout();
-  res.redirect('/member');
+  res.redirect('/member/');
 });
 
 router.get('*', isAuthenticated, (req, res) => {
-  let context: any = {};
-  const protocol = req.protocol;
-  let host = req.headers.host;
+  const sheetsRegistry = new SheetsRegistry();
 
-  const store = configureStore();
-  const preloadedState = store.getState();
+  // Set initial state of store
+  let initialState = InitialState;
+  initialState.memberState.displayName = req.user.displayName;
+  const store = configureStore(InitialState);
 
-  // getInitalProps
-  const branch = matchRoutes(routes, req.baseUrl + req.url);
-  const promises = branch.map(({route}) => {
-    let getInitialProps = route.component.getInitialProps;
-    return getInitialProps instanceof Function ? getInitialProps(store, protocol, host) : Promise.resolve(undefined);
-  });
-  return Promise.all(promises).then((data) => {
-    // render on server side
-    let context: any = {};
+  // Component
+  const component = (
+    <MaterialUiAppContainer store={store} location={req.baseUrl + req.url} theme={theme} sheetsRegistry={sheetsRegistry}>
+      <RouteComponent />
+    </MaterialUiAppContainer>
+  );
 
-    let contents = renderOnServer(<MemberApp />, theme, req, context, store);
+  const cssGenerator = () => {
+    return sheetsRegistry.toString();
+  };
 
-    if ( context.status === 404) {
-      res.status(404);
-    } else if (context.status === 302) {
-      return res.redirect(302, context.url);
-    }
-
-    res.render('member', {
-      userid: PassportUtility.getUserId(req),
-      title: 'EJS Server Rendering Title',
-      html: contents.html,
-      css: contents.css,
-      initialState: JSON.stringify(store.getState()),
-      jsDate: jsDate
-    });
-
-  });
+  renderer.renderWithInitialProps(req, res, 'member', { title: 'Member - Goemon' }, component, routes, store, cssGenerator);
 });
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/member/login');
+  res.redirect('/login');
 }

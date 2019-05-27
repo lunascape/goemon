@@ -1,125 +1,145 @@
-// import mongoose = require('mongoose');
-// import Schema = mongoose.Schema;
-// import Model = mongoose.Model;
-// import Document = mongoose.Document;
-// import PassportUtility from '../middlewares/passport/passport-utility';
+import crypto from 'crypto';
+import mongoose from 'mongoose';
+import Schema = mongoose.Schema;
+import Model = mongoose.Model;
+import Document = mongoose.Document;
 
-// // Define Document properties
-// export interface UserDocument extends Document {
-//   email: String;
-//   password: String;
-//   verifyEmail: Boolean;
-//   validation: {
-//     emailConfirmKey: String;
-//   };
-//   profile: {
-//     image: any;
-//     firstName: String;
-//     middleName: String;
-//     lastName: String;
-//     birthDay: Date;
-//   };
-//   createDate: Date;
-//   updateDate: Date;
-// }
+// Define Document properties
+export interface UserDocument extends Document {
+  email: string;
+  password: string;
+  displayName: string;
+  isEmailVerified: boolean;
+  validation: {
+    emailConfirmKey: string;
+  };
+  profile: {
+    image: any;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    birthDay: Date;
+  };
+  roles: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-// // Define static methods for Model
-// interface IUserModel extends Model<UserDocument> {
-//   new (doc?: Object): UserDocument;
+// Define static methods for Model
+interface IUserModel extends Model<UserDocument> {
+  new(doc?: Object): UserDocument;
 
-//   // Definitions of static methods
-//   authenticate(userId: String, password: String): Promise<{user: UserDocument, error: Error}>;
-//   createUser(userId: String, password: String): Promise<UserDocument>;
-//   isUserExist(userId: String): Promise<boolean>;
-// }
+  // Definitions of static methods
+  authenticate(userId: string, password: string): Promise<UserDocument>;
+  createUser(user: {
+    email: string;
+    password: string;
+    displayName: string;
+    profile: {
+      image: any;
+      firstName: string;
+      middleName: string;
+      lastName: string;
+      birthDay: Date;
+    };
+    roles: string[];
+  }): Promise<UserDocument>;
+  isUserExist(userId: string): Promise<boolean>;
+}
 
-// function createModel(): IUserModel {
-//   // Define mongoose Schema
-//   let userSchema: Schema = new Schema({
-//     email: { type: String, index: { unique: true }},
-//     password: { type: String, index: { required : true }},
-//     validation: {
-//       emailVerified: { type: Boolean, default: false },
-//       emailConfirmKey: String
-//     },
-//     profile: {
-//       image: { data: Buffer, contentType: String },
-//       firstName: String,
-//       middleName: String,
-//       lastName: String,
-//       birthDay: Date
-//     },
-//     createDate: { type: Date, default: new Date() },
-//     updateDate: { type: Date, default: new Date() }
-//   });
+function createModel(): IUserModel {
+  // Define mongoose Schema
+  let userSchema: Schema = new Schema({
+    email: { type: String, index: { unique: true } },
+    password: { type: String, required: true },
+    displayName: { type: String, required: true },
+    validation: {
+      emailVerified: { type: Boolean, default: false },
+      emailConfirmKey: String
+    },
+    profile: {
+      image: { data: Buffer, contentType: String },
+      firstName: String,
+      middleName: String,
+      lastName: String,
+      birthDay: Date
+    },
+    roles: [String],
+    createDate: { type: Date, default: new Date() },
+    updateDate: { type: Date, default: new Date() }
+  });
 
-//   // Create mongoose Object with IUserModel and UserDocument
-//   let User = <IUserModel>mongoose.model('User', userSchema);
+  // Create mongoose Object with IUserModel and UserDocument
+  let User = <IUserModel>mongoose.model('UserCollection', userSchema);
 
-//   // Return Model
-//   return User;
-// }
+  // Return Model
+  return User;
+}
 
-// export const User: IUserModel = createModel();
+export const Users: IUserModel = createModel();
 
-// //  Implementation of static method for Model
-// class UserModel {
+//  Implementation of static method for Model
+class UserModel {
 
-//   //
-//   // Implimentation of static methods
-//   //
-//   public static authenticate(email: String, password: String): Promise<{user: UserDocument, error: Error}> {
+  //
+  // Implimentation of static methods
+  //
+  public static async authenticate(email: string, password: string) {
+    let user = await Users.findOne({ email: email }).exec();
+    if (user != null && (user.password === UserModel.getHash(password))) {
+      return user;
+    } else {
+      throw new Error('Password does not match.');
+    }
+  }
 
-//     return new Promise( (resolve, reject) => {
-//       User.findOne({ email: email }).exec().then( (user) => {
-//         if ( user != null && ( user.password === PassportUtility.getHash(password) ) ) {
-//           resolve({
-//             user: user
-//           });
-//         } else {
-//           resolve({
-//             error: new Error('ID or Password is incollect.')
-//           });
-//       }
-//       }).catch( ( error:any ) => {
-//         reject(error);
-//       });
-//     });
+  public static async createUser(user: {
+    email: string;
+    password: string;
+    displayName: string;
+    profile: {
+      image: any;
+      firstName: string;
+      middleName: string;
+      lastName: string;
+      birthDay: Date;
+    },
+    roles: string[];
+  }
+  ): Promise<UserDocument> {
+    // Validation
+    if (user.email == undefined || user.password == undefined || user.roles.length == 0) {
+      throw new Error('Invalid parameters');
+    }
 
-//   };
+    // Create User objedt
+    let newUser = new Users();
+    newUser.email = user.email;
+    newUser.displayName = user.displayName;
+    newUser.password = UserModel.getHash(user.password);
+    newUser.roles = user.roles;
+    newUser.profile = user.profile;
 
-//   public static createUser(email: String, password: String): Promise<UserDocument> {
-//     return new Promise( (resolve, reject) => {
-//       let user = new User();
-//       user.email = email;
-//       user.password = PassportUtility.getHash(password);
-//       user.profile.firstName = '-';
-//       user.profile.lastName = '-';
+    return await newUser.save();
+  }
 
-//       user.save().then( (result) => {
-//         resolve(result);
-//       }).catch( (error:any) => {
-//         reject(error);
-//       });
-//     });
-//   }
+  public static async isUserExist(email: string) {
+    let result = await Users.findOne({ email: email }).countDocuments();
+    if (result > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-//   public static isUserExist(email:String): Promise<boolean> {
-//     return new Promise( (resolve, reject) => {
-//        User.findOne({ email : email } ).count().then((res:number) => {
-//          if ( res > 0 ) {
-//            resolve(true);
-//          } else {
-//            resolve(false);
-//          }
-//        }).catch( (error:any) => {
-//          reject(error);
-//        });
-//     });
-//   }
-// }
+  public static getHash(target: string): string {
+    let sha512 = crypto.createHash('sha512');
+    sha512.update(target);
+    return sha512.digest('hex');
+  }
+}
 
-// // Needs to append implementation of static interface here
-// User.authenticate = UserModel.authenticate;
-// User.createUser = UserModel.createUser;
-// User.isUserExist = UserModel.isUserExist;
+// Needs to append implementation of static interface here
+Users.authenticate = UserModel.authenticate;
+Users.createUser = UserModel.createUser;
+Users.isUserExist = UserModel.isUserExist;

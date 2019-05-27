@@ -5,16 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link href="/css/menber-style.css" rel="stylesheet" media="screen">
-    <title>Sample - <%- userid %></title>
+    <link href="/css/member-style.css" rel="stylesheet" media="screen">
+    <title><%- title %></title>
   </head>
   <body>
-  <script>
-    window.__PRELOADED_STATE__ = <%- initialState %>;
-  </script>
   <div id="app"><%- html %></div>
   <style id="jss-server-side"><%- css %></style>
-  <script type="text/javascript" charset="utf-8" src="/js/member-sample.js?ver=<%- jsDate %>"></script>
+  <script id="initial-config" type="text/plain" data-json="<%- config %>"></script>
+  <script type="text/javascript" charset="utf-8" src="<%- bundle %>"></script>
 </body>
 </html>
 

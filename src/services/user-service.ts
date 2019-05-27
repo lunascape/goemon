@@ -1,29 +1,54 @@
-import PassportUtility from '../middlewares/passport/passport-utility';
+import { Users } from '../models/user';
+import { verifyJWTToken } from '../base/utilities/jwt';
 
 class UserService {
 
-  public isUserExist(userid: string, callback: any) {
-    callback(true);
+  public async isUserExist(userId: string) {
+    return await Users.isUserExist(userId);
   }
 
-  public isValidUser(userId: string, callback: any) {
-    callback(true);
+  public async isValidUser(userId: string) {
+    return true;
   }
 
-  public authenticate(userId: string, password: string, callback: any) {
-    if ( userId == 'test@example.com' && password == PassportUtility.getHash('test') ) {
-      callback(true);
-    } else {
-      callback(false);
+  public async authenticate(userId: string, password: string) {
+    try {
+      let userDocument = await Users.authenticate(userId, password);
+      if (userDocument != null) {
+        return {
+          email: userDocument.email.toString(),
+          displayName: userDocument.displayName,
+          roles: userDocument.roles
+        };
+      } else {
+        return undefined;
+      }
+    } catch (err) {
+      return undefined;
     }
   }
 
-  public findById(userId: string, callback: any) {
-    callback({
-      id : 1,
-      userid: 'test@example.com',
-      username: 'Test User'
-    });
+  public async findById(id: string) {
+    let userDocument = await Users.findById(id).exec();
+    if (userDocument != null) {
+      return {
+        email: userDocument.email.toString()
+      };
+    } else {
+      throw new Error(`Can not find user ${id}`);
+    }
+  }
+
+  public async getUserFromJWTToken(token: string) {
+    const userData = await verifyJWTToken(token);
+    const email = userData.email;
+    let userDocument = await Users.findOne({ email: email }).exec();
+
+    if (!userDocument) {
+      return null;
+    }
+
+    return userDocument;
   }
 }
 

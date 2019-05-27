@@ -1,46 +1,32 @@
-import { createAction } from 'redux-actions';
-import Todo from '../models/todo';
-import TodoListService from '../services/todo-list-service';
+import { createTypeAction, createTypeAsyncAction } from 'type-redux';
+import { Todo } from '../objects/todo';
+import GuestApiClient from './clients/api/guest-api-client';
+import config from 'react-global-configuration';
 
-export const ADD_TODO = 'ADD_TODO';
-export const TOGGLE_TODOS = 'TOGGLE_TODOS';
-export const UPDATE_FETCH_STATUS = 'UPDATE_FETCH_STATUS';
-export const LOAD_TODOS = 'GET_TODOS';
-
+// Type Action Samples
 export interface IPayloadAddTodo {
   text: string;
   todo: Todo;
 }
 
-export const addTodo = createAction<string, IPayloadAddTodo>(ADD_TODO, (text: string) => {
+export const addTodo = createTypeAction('ADD_TODO', (args: {
+  text: string
+}) => {
   return {
-    text: text,
-    todo: new Todo(text, false)
+    text: args.text,
+    todo: new Todo(args.text, false)
   };
 });
-export const toggleTodo = createAction<number>(TOGGLE_TODOS);
-export const updateFetchStatus = createAction<boolean>(UPDATE_FETCH_STATUS);
-export const loadTodos = createAction<string>(LOAD_TODOS, TodoListService.getTodos);
 
-// Sample
+export const toggleTodo = createTypeAction('TOGGLE_TODOS', (id: number) => {
+  return {
+    id: id
+  };
+});
 
-// export function addTodo(text:string) {
-//     return {
-//         type: ADD_TODO,
-//         payload:text
-//     };
-// }
-
-// export function updateFetchStatus(value:boolean) {
-//     return {
-//         type: UPDATE_FETCH_STATUS,
-//         payload:value
-//     };
-// }
-
-// export function receiveTodo(todos) {
-//     return {
-//         type: RECEIVE_TODOS,
-//         payload:todos
-//     };
-// }
+export const listTodos = createTypeAsyncAction('LIST_TODOS', (options: any) => {
+  const protocol = !options ? config.get('protocol') : options.protocol;
+  const host = !options ? config.get('host') : options.host;
+  const client = new GuestApiClient(protocol + '://' + host);
+  return client.listTodos();
+});

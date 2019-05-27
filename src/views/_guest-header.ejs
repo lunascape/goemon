@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sample - <%= title %></title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link href="/css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="/css/style.css" rel="stylesheet" media="screen">
   </head>
@@ -14,11 +13,10 @@
       <div class="masthead">
             <ul class="nav nav-pills pull-right">
               <li class="<%= (title == 'Home') ? 'active' : '' %>"><a href="/">Home</a></li>
-              <li class="<%= (title == 'React') ? 'active' : '' %>"><a href="/simple">React</a></li>
+              <li class="<%= (title == 'React') ? 'active' : '' %>"><a href="/react">React</a></li>
               <li class="<%= (title == 'Redux') ? 'active' : '' %>"><a href="/redux">Redux</a></li>
-              <li class="<%= (title == 'Material') ? 'active' : '' %>"><a href="/material">Material</a></li>
               <li class="<%= (title == 'About') ? 'active' : '' %>"><a href="/about">About</a></li>
-              <li class="<%= (title == 'Login') ? 'active' : '' %>"><a href="/member/login">Login</a></li>
+              <li class="<%= (title == 'Login') ? 'active' : '' %>"><a href="/login">Login</a></li>
             </ul>
             <h3 class="muted">Sample</h3>
           </div>
