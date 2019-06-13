@@ -39,8 +39,8 @@
     "./bin",
     "./build",
     "./node_modules",
-    "gulpfile.js",
-    "webpack.config.js",
+    "gulpfile.ts",
+    "webpack.config.ts",
     "**/__test__",
     "**/__mocks__"
   ]
