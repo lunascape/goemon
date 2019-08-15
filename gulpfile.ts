@@ -1,23 +1,24 @@
 ﻿/*jshint esversion: 6 */
-var del = require('del'),
-  gulp = require('gulp'),
-  nodemon = require('gulp-nodemon'),
-  plumber = require('gulp-plumber'),
-  sass = require('gulp-sass'),
-  cssmin = require('gulp-cssmin'),
-  webpack = require('webpack'),
-  gulpWebpack = require('webpack-stream'),
-  webpackConfig = require('./webpack.config.js'),
-  browserSync = require('browser-sync').create(),
-  notifier = require('node-notifier'),
-  eslint = require('gulp-eslint'),
-  tslint = require('gulp-tslint'),
-  jest = require('jest-cli');
+import del from 'del';
+import gulp from 'gulp';
+import nodemon from 'gulp-nodemon';
+import plumber from 'gulp-plumber';
+import sass from 'gulp-sass';
+import cssmin from 'gulp-cssmin';
+import webpack from 'webpack';
+import gulpWebpack from 'webpack-stream';
+import webpackConfig from './webpack.config';
+import notifier from 'node-notifier';
+import eslint from 'gulp-eslint';
+import gulpTslint from 'gulp-tslint';
 
-var PRODUCT = JSON.parse(process.env.PROD_ENV || '0');
-var tslintconfig = require('./tslint.json');
-var targetPath = './build';
-var exec = require('child_process').exec;
+const jestCLI = require('jest-cli');
+const browserSync = require('browser-sync').create();
+
+const PRODUCT = JSON.parse(process.env.PROD_ENV || '0');
+const tslintconfig = require('./tslint.json');
+const targetPath = './build';
+const exec = require('child_process').exec;
 
 //
 // copy-asserts
@@ -51,10 +52,10 @@ gulp.task('css', () => {
 //
 // lint
 //
-gulp.task("lint", () => {
-  return gulp.src(["src/**/*.ts", "!src/**/*.d.ts"])
-    .pipe(tslint(tslintconfig))
-    .pipe(tslint.report());
+gulp.task('lint', () => {
+  return gulp.src(['src/**/*.ts', '!src/**/*.d.ts'])
+    .pipe(gulpTslint(tslintconfig))
+    .pipe(gulpTslint.report());
 });
 
 //
@@ -119,25 +120,25 @@ gulp.task('tsc', function (cb) {
 // nodemon
 //
 gulp.task('nodemon', (callback) => {
-  var called = false;
+  let called = false;
 
   return nodemon({
-      verbose: false,
-      script: './bin/www',
-      delay: "2500",
-      ext: 'js html css ejs ico txt pdf json',
-      ignore: [
-        'build/client/*',
-        'build/public/*',
-        'build/__test__/*',
-        '*.test.ts',
-        '*.test.js',
-        '*.ts',
-        '*.tsx',
-        '*.json',
-        'node_modules'
-      ]
-    })
+    verbose: false,
+    script: './bin/www',
+    delay: '2500',
+    ext: 'js html css ejs ico txt pdf json',
+    ignore: [
+      'build/client/*',
+      'build/public/*',
+      'build/__test__/*',
+      '*.test.ts',
+      '*.test.js',
+      '*.ts',
+      '*.tsx',
+      '*.json',
+      'node_modules'
+    ]
+  })
     .on('start', () => {
       if (!called) {
         called = true;
@@ -219,7 +220,7 @@ gulp.task('watch', (done) => {
     });
 
   gulp.watch(
-      ['./src/**', '!./src/client/**/*', '!./src/public/css/*', '!./src/**/*.test.ts'], gulp.series('tsc', 'copy-assets'))
+    ['./src/**', '!./src/client/**/*', '!./src/public/css/*', '!./src/**/*.test.ts'], gulp.series('tsc', 'copy-assets'))
     .on('change', function (path) {
       console.log('File(ts) ' + path + ' was changed');
     });
@@ -241,16 +242,16 @@ gulp.task('watch', (done) => {
 // test
 //
 gulp.task('test', () => {
-  return jest.runCLI({}, [__dirname]);
+  return jestCLI.runCLI({}, [__dirname]);
 });
 
 //
 // test:watch
 //
 gulp.task('test:watch', () => {
-  return jest.runCLI({
+  return jestCLI.runCLI({
     watch: true,
-    testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$",
+    testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$',
   }, [__dirname]);
 });
 
@@ -258,9 +259,9 @@ gulp.task('test:watch', () => {
 // test:watchall
 //
 gulp.task('test:ts:watchall', () => {
-  return jest.runCLI({
+  return jestCLI.runCLI({
     watchAll: true,
-    testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$",
+    testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$',
   }, [__dirname]);
 });
 
