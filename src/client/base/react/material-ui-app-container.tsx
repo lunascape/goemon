@@ -2,7 +2,7 @@ import React from 'react';
 
 import { SheetsRegistry } from 'react-jss';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { MuiThemeProvider, createGenerateClassName } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
 import { AppContainer } from './app-container';
 import moment from 'moment';
 // import MomentUtils from '@date-io/moment';
@@ -53,18 +53,18 @@ export class MaterialUiAppContainer extends React.Component<IProps, {}> {
   }
 
   render() {
-    const { theme, sheetsRegistry, i18n } = this.props;
+    const { theme, i18n } = this.props;
 
     moment.locale(i18n.language);
 
     if (isClientSide()) { // Check whether this method is called on client or server
       return (
         // <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <AppContainer {...this.props} />
-          </MuiThemeProvider>
-        </MuiPickersUtilsProvider>
+          </MuiPickersUtilsProvider>
+        </ThemeProvider>
         // </JssProvider>
       );
     } else {
@@ -72,11 +72,12 @@ export class MaterialUiAppContainer extends React.Component<IProps, {}> {
         // TODO
         // <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
         // <MuiThemeProvider theme={theme} sheetsManager={new Map()}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <AppContainer {...this.props} />
-          </MuiThemeProvider>
-        </MuiPickersUtilsProvider >
+          </MuiPickersUtilsProvider>
+        </ThemeProvider>
+
         // </JssProvider>
       );
     }

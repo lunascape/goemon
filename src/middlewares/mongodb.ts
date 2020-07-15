@@ -17,9 +17,10 @@ module.exports = async (app: express.Express) => {
     return;
   }
 
-  (<any>mongoose.Promise) = Promise;
+  // (<any>mongoose.Promise) = Promise;
   mongoose.set('useCreateIndex', true); // against MongoDB warinig
   mongoose.set('useNewUrlParser', true); // against MongoDB warinig
+  mongoose.set('useUnifiedTopology', true); // against MongoDB warinig
 
   let connectionName: string = envs.MONGODB_CONNECTION_DBNAME.value;
   let connectionString: string = envs.MONGODB_CONNECTION_URL.value;

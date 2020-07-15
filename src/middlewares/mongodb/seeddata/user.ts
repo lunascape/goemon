@@ -53,6 +53,7 @@ const creator: ISeedCreator = {
         roles: ['admin']
       });
     } catch (err) {
+      logger.error(err);
       logger.error('ERROR: Failed to ceate seed user');
     }
   }

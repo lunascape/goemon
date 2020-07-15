@@ -58,7 +58,7 @@ export class ServerSideRenderer {
         Object.assign(config, serverState);
       }
 
-      const timeStamp = generateNumberFromTimestamp(__dirname + '/../../../build/public/js/' + this.bundleFilePath);
+      const timeStamp = generateNumberFromTimestamp(__dirname + '/../../public/js/' + this.bundleFilePath);
 
       let option = {
         html: html,

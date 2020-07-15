@@ -1,6 +1,6 @@
 ﻿{
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2017",
     "module": "commonjs",
     "lib": [
       "dom",
@@ -16,6 +16,7 @@
     "removeComments": true,
     "jsx": "react",
     "outDir": "build/",
+    // "outDir": "./functions/lib",
     "rootDir": "./src",
     "baseUrl": "./src",
     "allowJs": true,
@@ -27,7 +28,7 @@
     "noImplicitReturns": true,
     "strict": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
   },
   "include": [
     "**/*.ts",
