@@ -68,9 +68,9 @@ LPL
 - Jest
 - gulp
 - webpack 4
-- react-router 4
+- react-router 5
 - graphql
-- Material UI
+- Material UI 4
 - Passport
 - MongoDB 4
 
